@@ -10,11 +10,16 @@ vars.label = {'Mics per Platform','Number of Platforms',...
 vars.value = {'3','2','0.5','1','17','1','WHITE NOISE',...
     'Choose Location','Choose Locations'};
 
-% XYZ Points of center of clusters
-vars.clusterCenters = [1.4597 1.2727 1.5;...
-                  1.4947 0.2733 1.5];
+% % XYZ Points of center of clusters
+% vars.clusterCenters = [1.4597 1.2727 1.5;...
+%                   1.4947 0.2733 1.5];
+%               
+% vars.sigpos = [-1.6993 0.0076 1.5]';
+
+vars.clusterCenters = [2 -0.25 1.5;...
+                  2 0.25 1.5];
               
-vars.sigpos = [-1.6993 0.0076 1.5]';
+vars.sigpos = [-1.5 0 1.5]';
               
 vars.independent = 'Platform Angle';
 vars.ii = [4 6];
@@ -66,6 +71,7 @@ for aa = 1:vars.N
     for vv = 1:length(vars.ii)
         localvars.value{vars.ii(vv)} = localvars.indvalues(vv,aa);
     end
+    
     micnum = localvars.value{2}*localvars.value{1};  %  Number of mics in array to be tested
     mjs_radius = localvars.value{5}/(200*sin(pi/localvars.value{1}));
 
@@ -118,16 +124,16 @@ for aa = 1:vars.N
         waitbar(0.25,waitDialog,'Simulating Source');
         %%%% SOURCE
         % Generate target waveform
-%         [b,a] = butter(5,[200 (vars.fs)-200]./vars.fs);
-%         target = randn(vars.fs*5,1);
-%         target = 10^(-3/20)*(target./max(target));
-%         target = filtfilt(b,a,target);
+        [b,a] = butter(5,[200 (vars.fs)-200]./vars.fs);
+        target = randn(vars.fs*5,1);
+        target = 10^(-3/20)*(target./max(target));
+        target = filtfilt(b,a,target);
         
-        [target,fso] = audioread('./wav/mozart-1.wav');
-        target = target(1:max(length(target),fso*5));
-        target = resample(target,vars.fs,fso);  % Resample to fs
-%                 target = filtfilt(target,a,y); % high pass filter the signal
-        target = target*ones(1,vars.sigtot);
+%         [target,fso] = audioread('./wav/mozart-1.wav');
+%         target = target(1:max(length(target),fso*5));
+%         target = resample(target,vars.fs,fso);  % Resample to fs
+% %                 target = filtfilt(target,a,y); % high pass filter the signal
+%         target = target*ones(1,vars.sigtot);
         
         % Compute array signals from target
         [sigoutper, taxper] = simarraysigim(target, vars.fs, vars.sigpos, vars.mposplat{aa}, vars.froom, vars.bs, vars.prop);
@@ -164,7 +170,7 @@ for aa = 1:vars.N
         % Random window in 1 second
 %             rpper = vars.winlen+round((length(target)-2*vars.winlen)*rand(1));
         % iterative time windows
-        rpper = vars.winlen+round((length(target)-2*vars.winlen)*0.1)+2000*(aa-1);
+        rpper = vars.winlen+round((length(target)-2*vars.winlen)*0.1)+vars.wininc*(aa-1);
         % Normalize noise power
         nosoutper = nosoutper/sqrt(mean(mean(nosoutper.^2)));
         % Add coherent noise to target signals

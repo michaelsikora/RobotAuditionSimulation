@@ -1,3 +1,5 @@
+% Michael Sikora <m.sikora@uky.edu>
+% 2018.06.14
 
 % Plots the series of images
 
@@ -40,14 +42,18 @@ plot([vars.vn(1,:), vars.vn(1,1)],[vars.vn(2,:), vars.vn(2,1)],'k--')
 % Label Plot
 xlabel('Xaxis Meters')
 ylabel('Yaxis Meters')
-title({['SRP image (Mics at squares,'],[' Target in circle']} )
-hold off    
+title({['SRP image (Mics at squares,'],[' Target in circle']} )   
 
 vars.currentImageIndex = aa;
 limits = axis;
 caxis([zmin zmax]);
 axis([limits(1:4),zmin, 1.8]);
 view(2);
+
+%%%% IMAGE ANALYSIS : PLOTS THE MAIN LOBE OUTLINE
+[SNRdB,avgnoise,peakSourcePower,thresholdMeanPower] = imErrorAnalysis2(im{aa},vars.gridax,vars.sigpos,8);
+table(SNRdB,avgnoise,peakSourcePower,thresholdMeanPower)
+hold off
 
 pause(1);
 end

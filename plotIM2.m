@@ -1,3 +1,6 @@
+
+% Plots the average, minimum and maximum images for the stored series.
+
 clear;    
 load('testdata.mat');
 
@@ -55,11 +58,15 @@ plot([vars.vn(1,:), vars.vn(1,1)],[vars.vn(2,:), vars.vn(2,1)],'k--')
 xlabel('Xaxis Meters')
 ylabel('Yaxis Meters')
 title({['SRP Average image (Clusters centered at squares,'],[' Target in circle)']} )
-hold off
 limits = axis;
 caxis([zmin zmax]);
 axis([limits(1:4),zmin, 1.8]);
 view(2);
+
+%%%% IMAGE ANALYSIS
+[SNRdB,avgnoise,peakSourcePower,thresholdMeanPower] = imErrorAnalysis2(imavg,vars.gridax,vars.sigpos,8);
+table(SNRdB,avgnoise,peakSourcePower,thresholdMeanPower)
+hold off
 
 %%%% Plot
 figure(3);
@@ -68,8 +75,6 @@ peakVal = max(max(im{aa})); % Used to test convergence
 colormap(jet); colorbar; axis('xy');
 axis([vars.froom(1,1)-.25, vars.froom(1,2)+.25, vars.froom(2,1)-.25, vars.froom(2,2)+.25]);
 hold on;
-%  Mark coherenet noise positions
-%       plot(sigposn(1,:),sigposn(2,:),'xb','MarkerSize', 18,'LineWidth', 2);  %  Coherent noise
 %  Mark actual target positions  
 sourceplot = plot3(vars.sigpos(1,:),vars.sigpos(2,:),ones(vars.sigtot)*1.5,'ok', 'MarkerSize', 18,'LineWidth', 2);
 axis('tight');
@@ -85,11 +90,15 @@ plot([vars.vn(1,:), vars.vn(1,1)],[vars.vn(2,:), vars.vn(2,1)],'k--')
 xlabel('Xaxis Meters')
 ylabel('Yaxis Meters')
 title({['SRP Minimum image (Clusters centered at squares,'],[' Target in circle)']} )
-hold off   
 limits = axis;
 caxis([zmin zmax]);
 axis([limits(1:4),zmin, 1.8]);
 view(2);
+
+%%%% IMAGE ANALYSIS
+[SNRdB,avgnoise,peakSourcePower,thresholdMeanPower] = imErrorAnalysis2(immin,vars.gridax,vars.sigpos,8);
+table(SNRdB,avgnoise,peakSourcePower,thresholdMeanPower)
+hold off
 
 %%%% Plot
 figure(4);
@@ -97,8 +106,6 @@ h = surf(vars.gridax{1},vars.gridax{2}, immax);
 colormap(jet); colorbar; axis('xy');
 axis([vars.froom(1,1)-.25, vars.froom(1,2)+.25, vars.froom(2,1)-.25, vars.froom(2,2)+.25]);
 hold on;
-%  Mark coherenet noise positions
-%       plot(sigposn(1,:),sigposn(2,:),'xb','MarkerSize', 18,'LineWidth', 2);  %  Coherent noise
 %  Mark actual target positions  
 sourceplot = plot3(vars.sigpos(1,:),vars.sigpos(2,:),ones(vars.sigtot)*1.5,'ok', 'MarkerSize', 18,'LineWidth', 2);
 axis('tight');
@@ -113,9 +120,13 @@ plot([vars.vn(1,:), vars.vn(1,1)],[vars.vn(2,:), vars.vn(2,1)],'k--')
 % Label Plot
 xlabel('Xaxis Meters')
 ylabel('Yaxis Meters')
-title({['SRP Maximum image (Clusters centered at squares,'],[' Target in circle)']} )
-hold off    
+title({['SRP Maximum image (Clusters centered at squares,'],[' Target in circle)']} ) 
 limits = axis;
 caxis([zmin zmax]);
 axis([limits(1:4),zmin, 1.8]);
 view(2);
+
+%%%% IMAGE ANALYSIS
+[SNRdB,avgnoise,peakSourcePower,thresholdMeanPower] = imErrorAnalysis2(immax,vars.gridax,vars.sigpos,8);
+table(SNRdB,avgnoise,peakSourcePower,thresholdMeanPower)
+hold off
