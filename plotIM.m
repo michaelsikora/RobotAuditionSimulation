@@ -15,7 +15,7 @@ zmin = min(minimums);
 aa = 1; % for single image
 for aa = 1:vars.N
 %%%% Plot
-figure(1);
+fig = figure(1);
 h = surf(vars.gridax{1},vars.gridax{2}, im{aa});
 peakVal = max(max(im{aa})); % Used to test convergence
 colormap(jet); colorbar; axis('xy');
@@ -41,7 +41,6 @@ plot([vars.vn(1,:), vars.vn(1,1)],[vars.vn(2,:), vars.vn(2,1)],'k--')
 xlabel('Xaxis Meters')
 ylabel('Yaxis Meters')
 title({['SRP image (Mics at squares,'],[' Target in circle']} )
-hold off    
 
 vars.currentImageIndex = aa;
 limits = axis;
@@ -49,5 +48,11 @@ caxis([zmin zmax]);
 axis([limits(1:4),zmin, 1.8]);
 view(2);
 
-pause(1);
+%%%% IMAGE ANALYSIS
+[SNRdB,avgnoise,peakSourcePower,thresholdMeanPower] = imErrorAnalysis2(im{aa},vars.gridax,vars.sigpos,8);
+table(SNRdB,avgnoise,peakSourcePower,thresholdMeanPower)
+hold off
+
+% saveas(gcf,['./tests/06.14_2/SRP',num2str(aa)],'png');
+pause(2);
 end

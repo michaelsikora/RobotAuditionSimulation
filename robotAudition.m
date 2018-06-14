@@ -20,15 +20,18 @@ vars.clusterCenters = [2 -0.25 1.5;...
                   2 0.25 1.5];
               
 vars.sigpos = [-1.5 0 1.5]';
+
               
 vars.independent = 'Platform Angle';
-vars.ii = [4 6];
-vars.N = 4;
+vars.ii = [4 6 7 8];
+vars.N = 16;
 vars.value{4} = rand(1,vars.N).*90;
+vars.value{7} = rand(1,vars.N).*90;
 % vars.value{4} = zeros(1,vars.N);
 vars.value{6} = (rand(1,vars.N).*180)-90;
+vars.value{8} = (rand(1,vars.N).*180)-90;
 % vars.value{6} = linspace(-90,90,vars.N);
-    snrdbarray = zeros(1,vars.N);
+    vars.snrdbarray = zeros(1,vars.N);
 %     angleArray = zeros(1,vars.N);
 %     angleArray = ones(1,vars.N).*pi/2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,7 +39,7 @@ vars.value{6} = (rand(1,vars.N).*180)-90;
 
 %%%% Get variable values for simulation
 % Numerical variables
-varCoeffs = [1 1 1 (pi/180) 1 (pi/180)]; % values to scale input variables
+varCoeffs = [1 1 1 (pi/180) 1 (pi/180) (pi/180) (pi/180)]; % values to scale input variables
 N_numVars = length(varCoeffs);
 for vv = 1:N_numVars % load numerical variables from user data
     if ischar(vars.value{vv})
@@ -88,7 +91,11 @@ for aa = 1:vars.N
             localvars.value{1},localvars.value{5}/100);
         % vector from each mic center to source location
         mjs_pl2src(pp,:) = vars.sigpos-vars.clusterCenters(pp,:)';
-        mjs_pltheta(pp) = atan2(mjs_pl2src(pp,2),mjs_pl2src(pp,1))+localvars.value{6};
+        if pp == 1
+            mjs_pltheta(pp) = atan2(mjs_pl2src(pp,2),mjs_pl2src(pp,1))+localvars.value{6};
+        else
+            mjs_pltheta(pp) = atan2(mjs_pl2src(pp,2),mjs_pl2src(pp,1))+localvars.value{8};
+        end
         % tangential planar vector for rotation
         mjs_pltan2src(pp,:) = cross(mjs_pl2src(pp,:),[0 0 1]);
         % z axis rotations to orient endfire to source;
@@ -97,7 +104,11 @@ for aa = 1:vars.N
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     fprintf('Orientation: Pitch %02.f degrees, Yaw %02.f degrees : ', localvars.value{4}/pi*180, localvars.value{6}/pi*180);
     for pp = 1:localvars.value{2}
-        mjs_platform(pp).eulOrient(mjs_pltheta(pp),localvars.value{4}); 
+        if pp == 1
+            mjs_platform(pp).eulOrient(mjs_pltheta(pp),localvars.value{4});
+        else
+            mjs_platform(pp).eulOrient(mjs_pltheta(pp),localvars.value{7});
+        end
     end
 
 % Add microphone coordinates to mic position matrix
@@ -196,7 +207,7 @@ for aa = 1:vars.N
         %%%% IMAGE ANALYSIS
         [SNRdB,avgnoise,peakSourcePower,thresholdMeanPower] = imErrorAnalysis(im{aa},vars.gridax,vars.sigpos,8);
         table(SNRdB,avgnoise,peakSourcePower,thresholdMeanPower)
-        snrdbarray(aa) = SNRdB;
+        vars.snrdbarray(aa) = SNRdB;
          
 end % END of aa loop
 close(waitDialog);

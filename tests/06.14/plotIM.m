@@ -14,7 +14,7 @@ end
 zmax = max(maximums);
 zmin = min(minimums);
 
-aa = 1; % for single image
+% aa = 4; % for single image
 for aa = 1:vars.N
 %%%% Plot
 figure(1);
@@ -54,6 +54,6 @@ view(2);
 [SNRdB,avgnoise,peakSourcePower,thresholdMeanPower] = imErrorAnalysis2(im{aa},vars.gridax,vars.sigpos,8);
 table(SNRdB,avgnoise,peakSourcePower,thresholdMeanPower)
 hold off
-
+% pause
 pause(1);
 end
