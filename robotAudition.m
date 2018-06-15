@@ -19,21 +19,27 @@ vars.value = {'3','2','0.5','1','17','1','WHITE NOISE',...
 vars.clusterCenters = [2 -0.25 1.5;...
                   2 0.25 1.5];
               
-vars.sigpos = [-1.5 0 1.5]';
+% vars.sigpos = [-1.5 0 1.5]';
+vars.sigpos = [-1.5 2 1.5]';
 
               
 vars.independent = 'Platform Angle';
 vars.ii = [4 6 7 8];
 vars.N = 16;
 vars.value{4} = rand(1,vars.N).*90;
+% vars.value{7} = vars.value{4};
 vars.value{7} = rand(1,vars.N).*90;
 % vars.value{4} = zeros(1,vars.N);
+
 vars.value{6} = (rand(1,vars.N).*180)-90;
+% vars.value{8} = vars.value{6};
 vars.value{8} = (rand(1,vars.N).*180)-90;
 % vars.value{6} = linspace(-90,90,vars.N);
     vars.snrdbarray = zeros(1,vars.N);
 %     angleArray = zeros(1,vars.N);
 %     angleArray = ones(1,vars.N).*pi/2;
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -200,7 +206,7 @@ for aa = 1:vars.N
         % Whiten signal (apply PHAT, with beta factor given at the begining)
         sigout = whiten(sigoutpera(sst:sed,:).*wintap, vars.batar);
         % Create SRP Image from processed perimeter array signals
-        waitbar(.50,waitDialog,'Running SRP image');
+        waitbar(.50,waitDialog,['Running SRP image ', num2str(aa),'/',num2str(vars.N)]);
         im{aa} = srpframenn(sigout, vars.gridax, vars.mposplat{aa}, vars.fs, vars.prop.c, vars.trez);
         waitbar(.75,waitDialog,'Plotting SRP image');
 
