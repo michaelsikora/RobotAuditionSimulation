@@ -25,7 +25,7 @@ vars.sigpos = [-1.5 2 1.5]';
               
 vars.independent = 'Platform Angle';
 vars.ii = [4 6 7 8];
-vars.N = 16;
+vars.N = 4;
 vars.value{4} = rand(1,vars.N).*90;
 % vars.value{7} = vars.value{4};
 vars.value{7} = rand(1,vars.N).*90;
@@ -141,16 +141,16 @@ for aa = 1:vars.N
         waitbar(0.25,waitDialog,'Simulating Source');
         %%%% SOURCE
         % Generate target waveform
-        [b,a] = butter(5,[200 (vars.fs)-200]./vars.fs);
-        target = randn(vars.fs*5,1);
-        target = 10^(-3/20)*(target./max(target));
-        target = filtfilt(b,a,target);
+%         [b,a] = butter(5,[200 (vars.fs)-200]./vars.fs);
+%         target = randn(vars.fs*5,1);
+%         target = 10^(-3/20)*(target./max(target));
+%         target = filtfilt(b,a,target);
         
-%         [target,fso] = audioread('./wav/mozart-1.wav');
-%         target = target(1:max(length(target),fso*5));
-%         target = resample(target,vars.fs,fso);  % Resample to fs
-% %                 target = filtfilt(target,a,y); % high pass filter the signal
-%         target = target*ones(1,vars.sigtot);
+        [target,fso] = audioread('./wav/mozart-1.wav');
+        target = target(1:max(length(target),fso*5));
+        target = resample(target,vars.fs,fso);  % Resample to fs
+%                 target = filtfilt(target,a,y); % high pass filter the signal
+        target = target*ones(1,vars.sigtot);
         
         % Compute array signals from target
         [sigoutper, taxper] = simarraysigim(target, vars.fs, vars.sigpos, vars.mposplat{aa}, vars.froom, vars.bs, vars.prop);
